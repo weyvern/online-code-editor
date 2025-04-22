@@ -1,28 +1,27 @@
 'use client';
 
-import React, { useState, use } from 'react';
+import { useEffect, useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
-import { Project } from '@/lib/types';
+import { useEditorContext } from '@/context/EditorContext';
 
-interface EditorProps {
-  projectPromise: Promise<Project>;
-}
+const Editor = () => {
+  const { project } = useEditorContext();
+  const [activeFile, setActiveFile] = useState<string>(
+    project ? Object.keys(project.files)[0] || '' : ''
+  );
 
-const Editor: React.FC<EditorProps> = ({ projectPromise }) => {
-  const project = use(projectPromise);
-  const [activeFile, setActiveFile] = useState<string>(Object.keys(project.files)[0] || '');
+  useEffect(() => {
+    if (project && !project.files[activeFile]) {
+      setActiveFile(Object.keys(project.files)[0] || '');
+    } else if (!project) {
+      setActiveFile('');
+    }
+  }, [project, activeFile]);
 
   const handleEditorChange = (value: string | undefined) => {
-    /*  if (activeFile && value !== undefined) {
-      setProject(prevProject => ({
-        ...prevProject,
-        files: {
-          ...prevProject.files,
-          [activeFile]: { content: value }
-        }
-      }));
-      // TODO: Propagate changes up or use state management
-    } */
+    if (project && activeFile && value !== undefined) {
+      console.log(`File ${activeFile} changed:`, value);
+    }
   };
 
   const getLanguage = (filename: string): string => {
@@ -57,25 +56,25 @@ const Editor: React.FC<EditorProps> = ({ projectPromise }) => {
         ))}
       </div>
       <div className='flex-grow'>
-        {activeFile && (
+        {activeFile && project.files[activeFile] ? (
           <MonacoEditor
-            height='100%'
             language={getLanguage(activeFile)}
-            theme='vs-dark' // or 'light'
+            theme='vs-dark'
             value={project.files[activeFile]?.content || ''}
             onChange={handleEditorChange}
             options={{
+              automaticLayout: true,
               minimap: { enabled: false },
               fontSize: 14,
               wordWrap: 'on',
               scrollBeyondLastLine: false
             }}
           />
+        ) : (
+          <div className='flex items-center justify-center h-full text-gray-500'>
+            Select a file to edit
+          </div>
         )}
-      </div>
-      {/* TODO: Add state propagation logic here or in parent */}
-      <div className='p-2 text-xs text-gray-500 border-t'>
-        Changes here currently only update local state. Need to lift state up.
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import type { Project } from '@/lib/types';
 
 export const getProject = async (): Promise<Project> => {
-  await new Promise(resolve => setTimeout(resolve, 2000));
   return {
     type: 'static',
     files: {

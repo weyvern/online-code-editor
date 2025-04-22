@@ -1,14 +1,10 @@
 'use client';
 
-import React, { use, useEffect, useState } from 'react';
-import { Project } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import { useEditorContext } from '@/context/EditorContext';
 
-interface PreviewProps {
-  projectPromise: Promise<Project>;
-}
-
-const Preview: React.FC<PreviewProps> = ({ projectPromise }) => {
-  const project = use(projectPromise);
+const Preview = () => {
+  const { project } = useEditorContext();
   const [iframeContent, setIframeContent] = useState('');
 
   useEffect(() => {
