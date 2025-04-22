@@ -1,14 +1,14 @@
-// src/components/Preview.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Project } from '@/lib/types';
 
 interface PreviewProps {
-  project: Project; // Receive the project state from the parent
+  projectPromise: Promise<Project>;
 }
 
-const Preview: React.FC<PreviewProps> = ({ project }) => {
+const Preview: React.FC<PreviewProps> = ({ projectPromise }) => {
+  const project = use(projectPromise);
   const [iframeContent, setIframeContent] = useState('');
 
   useEffect(() => {

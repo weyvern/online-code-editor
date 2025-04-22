@@ -1,49 +1,26 @@
 import Editor from '@/components/Editor';
 import Preview from '@/components/Preview';
-import { Project } from '@/lib/types';
+import { getProject } from '@/data/projects';
+import { Suspense } from 'react';
 
-// Mock project data - replace with actual data fetching later
-const getProjectData = async (): Promise<Project> => {
-  return {
-    type: 'static',
-    files: {
-      'index.html': {
-        content: `<!DOCTYPE html>
-<html>
-<head>
-  <title>Preview</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <h1>Hello from Editor!</h1>
-  <script src="index.js"></script>
-</body>
-</html>`
-      },
-      'index.js': {
-        content: `console.log('Hello from JavaScript!');
-document.body.style.backgroundColor = 'lightblue';`
-      },
-      'styles.css': {
-        content: `h1 {
-  color: navy;
-}`
-      }
-    }
-  };
-};
-
-export default async function Home() {
-  const project = await getProjectData();
+const Home = () => {
+  const projectPromise = getProject();
 
   return (
     <main className='flex h-screen w-screen'>
-      <div className='w-1/2 h-full border-r border-gray-300'>
-        <Editor initialProject={project} />
-      </div>
-      <div className='w-1/2 h-full'>
-        <Preview project={project} />
-      </div>
+      <Suspense
+        fallback={<div className='flex items-center justify-center w-full h-full'>Loading...</div>}
+      >
+        <div className='flex flex-col w-1/2'>
+          <Editor projectPromise={projectPromise} />
+        </div>
+        <div className='flex flex-col w-1/2'>
+          {' '}
+          <Preview projectPromise={projectPromise} />
+        </div>
+      </Suspense>
     </main>
   );
-}
+};
+
+export default Home;

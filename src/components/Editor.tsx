@@ -1,20 +1,19 @@
-// src/components/Editor.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { Project } from '@/lib/types';
 
 interface EditorProps {
-  initialProject: Project;
+  projectPromise: Promise<Project>;
 }
 
-const Editor: React.FC<EditorProps> = ({ initialProject }) => {
-  const [project, setProject] = useState<Project>(initialProject);
-  const [activeFile, setActiveFile] = useState<string>(Object.keys(initialProject.files)[0] || '');
+const Editor: React.FC<EditorProps> = ({ projectPromise }) => {
+  const project = use(projectPromise);
+  const [activeFile, setActiveFile] = useState<string>(Object.keys(project.files)[0] || '');
 
   const handleEditorChange = (value: string | undefined) => {
-    if (activeFile && value !== undefined) {
+    /*  if (activeFile && value !== undefined) {
       setProject(prevProject => ({
         ...prevProject,
         files: {
@@ -23,7 +22,7 @@ const Editor: React.FC<EditorProps> = ({ initialProject }) => {
         }
       }));
       // TODO: Propagate changes up or use state management
-    }
+    } */
   };
 
   const getLanguage = (filename: string): string => {
