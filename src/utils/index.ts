@@ -1,5 +1,5 @@
-import { Project } from '@/types';
 import { useEffect, useState } from 'react';
+import type { Project } from '@/types';
 
 export function useDebouncedValue<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);

@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useReducer, use } from 'react';
 import type { ReactNode } from 'react';
-import type { Project } from '@/types';
 import { utf8ToBase64 } from '@/utils';
+import type { Project } from '@/types';
 
 interface EditorContextType {
   project: Project;
