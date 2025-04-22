@@ -12,10 +12,25 @@ export function useDebouncedValue<T>(value: T, delay: number): T {
   return debounced;
 }
 
+export const utf8ToBase64 = (str: string) => {
+  // Encode string to UTF-8 bytes
+  const utf8Bytes = new TextEncoder().encode(str);
+  // Convert bytes to Base64
+  return btoa(String.fromCharCode(...utf8Bytes));
+};
+
+export const base64ToUtf8 = (base64: string) => {
+  // Decode Base64 to binary string
+  const binaryStr = atob(base64);
+  // Convert binary string to Uint8Array
+  const utf8Bytes = Uint8Array.from(binaryStr, char => char.charCodeAt(0));
+  // Decode UTF-8 bytes to string
+  return new TextDecoder().decode(utf8Bytes);
+};
+
 export const parsingStaticProjects = (project: Project) => {
   const nonHtmlFiles = Object.keys(project.files).filter(filename => !filename.endsWith('.html'));
-
-  const htmlFile = project.files['index.html']?.content || '';
+  const htmlString = base64ToUtf8(project.files['index.html']?.content || '');
 
   const blobUrls: {
     filename: string;
@@ -23,13 +38,14 @@ export const parsingStaticProjects = (project: Project) => {
   }[] = [];
 
   for (const filename of nonHtmlFiles) {
-    const fileContent = project.files[filename]?.content || '';
-    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const fileContent = base64ToUtf8(project.files[filename]?.content || '');
+    const type = filename.endsWith('.js') ? 'text/javascript' : 'text/css';
+    const blob = new Blob([fileContent], { type });
     const blobUrl = URL.createObjectURL(blob);
     blobUrls.push({ filename, blobUrl });
   }
 
-  let assembledHtml = htmlFile;
+  let assembledHtml = htmlString;
 
   blobUrls.forEach(({ filename, blobUrl }) => {
     if (filename.endsWith('.js')) {

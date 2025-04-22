@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { useEditorContext } from '@/context/EditorContext';
+import { base64ToUtf8 } from '@/utils';
 
 const Editor = () => {
   const { project, dispatch } = useEditorContext();
@@ -53,7 +54,7 @@ const Editor = () => {
           <MonacoEditor
             language={getLanguage(activeFile)}
             theme='vs-dark'
-            value={project.files[activeFile]?.content || ''}
+            value={base64ToUtf8(project.files[activeFile]?.content || '')}
             onChange={handleEditorChange}
             options={{
               automaticLayout: true,

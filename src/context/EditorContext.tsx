@@ -3,6 +3,7 @@
 import { createContext, useContext, useReducer, use } from 'react';
 import type { ReactNode } from 'react';
 import type { Project } from '@/types';
+import { utf8ToBase64 } from '@/utils';
 
 interface EditorContextType {
   project: Project;
@@ -29,7 +30,7 @@ const editorReducer = (state: Project, action: EditorAction): Project => {
           ...state.files,
           [filename]: {
             ...state.files[filename],
-            content: content ?? state.files[filename]?.content ?? ''
+            content: content ? utf8ToBase64(content) : ''
           }
         }
       };

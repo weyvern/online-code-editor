@@ -5,25 +5,16 @@ export const getProject = async (): Promise<Project> => {
     type: 'static',
     files: {
       'index.html': {
-        content: `<!DOCTYPE html>
-  <html>
-  <head>
-    <title>Preview</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <h1>Hello from Editor!</h1>
-    <script src="index.js"></script>
-  </body>
-  </html>`
+        content:
+          'PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KICA8aGVhZD4KICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04IiAvPgogICAgPHRpdGxlPldlYXRoZXIgTG9va3VwPC90aXRsZT4KICAgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0ic3R5bGVzLmNzcyI+CiAgPC9oZWFkPgogIDxib2R5PgogICAgPGgyPkNoZWNrIHRoZSBXZWF0aGVyPC9oMj4KICAgIDxpbnB1dCBpZD0iY2l0eUlucHV0IiB0eXBlPSJ0ZXh0IiBwbGFjZWhvbGRlcj0iRW50ZXIgY2l0eSBuYW1lIiAvPgogICAgPGJ1dHRvbj5HZXQgV2VhdGhlcjwvYnV0dG9uPgogICAgPGRpdiBpZD0icmVzdWx0IiBjbGFzcz0id2VhdGhlciI+PC9kaXY+CiAgICA8c2NyaXB0IHNyYz0iaW5kZXguanMiPjwvc2NyaXB0PgogIDwvYm9keT4KPC9odG1sPgo='
       },
       'index.js': {
-        content: `console.log('Hello from JavaScript!');\ndocument.body.style.backgroundColor = 'lightblue';`
+        content:
+          'Ly8gU2ltdWxhdGVkIHdlYXRoZXIgZGF0YQpjb25zdCBmYWtlV2VhdGhlckRhdGEgPSB7CiAgbG9uZG9uOiB7IHRlbXA6IDE0LCBkZXNjcmlwdGlvbjogJ2Nsb3VkeScsIGVtb2ppOiAn4piB77iPJyB9LAogIG5ld3lvcms6IHsgdGVtcDogMTgsIGRlc2NyaXB0aW9uOiAnc3VubnknLCBlbW9qaTogJ+KYgO+4jycgfSwKICB0b2t5bzogeyB0ZW1wOiAyMiwgZGVzY3JpcHRpb246ICdwYXJ0bHkgY2xvdWR5JywgZW1vamk6ICfim4UnIH0sCiAgc3lkbmV5OiB7IHRlbXA6IDI1LCBkZXNjcmlwdGlvbjogJ2NsZWFyIHNraWVzJywgZW1vamk6ICfwn4yeJyB9LAogIGJlcmxpbjogeyB0ZW1wOiAxMCwgZGVzY3JpcHRpb246ICdsaWdodCByYWluJywgZW1vamk6ICfwn4yn77iPJyB9LAogIHBhcmlzOiB7IHRlbXA6IDEyLCBkZXNjcmlwdGlvbjogJ2RyaXp6bGUnLCBlbW9qaTogJ/CfjKbvuI8nIH0sCiAgdG9yb250bzogeyB0ZW1wOiA4LCBkZXNjcmlwdGlvbjogJ3Nub3d5JywgZW1vamk6ICfinYTvuI8nIH0sCiAgY2Fpcm86IHsgdGVtcDogMzAsIGRlc2NyaXB0aW9uOiAnaG90IGFuZCBzdW5ueScsIGVtb2ppOiAn8J+UpScgfSwKICByaW86IHsgdGVtcDogMjgsIGRlc2NyaXB0aW9uOiAnaHVtaWQgYW5kIHN1bm55JywgZW1vamk6ICfwn4yk77iPJyB9LAogIG11bWJhaTogeyB0ZW1wOiAzMiwgZGVzY3JpcHRpb246ICdtb25zb29uIHJhaW4nLCBlbW9qaTogJ/CfjKfvuI8nIH0sCn07Cgpkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdidXR0b24nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+IHsKICBjb25zdCBjaXR5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdHlJbnB1dCcpLnZhbHVlLnRyaW0oKS50b0xvd2VyQ2FzZSgpOwogIGNvbnN0IHJlc3VsdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQnKTsKCiAgaWYgKCFjaXR5KSB7CiAgICByZXN1bHQuaW5uZXJIVE1MID0gJzxkaXYgY2xhc3M9ImVycm9yIj5QbGVhc2UgZW50ZXIgYSBjaXR5IG5hbWUuPC9kaXY+JzsKICAgIHJldHVybjsKICB9CgogIGNvbnN0IHdlYXRoZXIgPSBmYWtlV2VhdGhlckRhdGFbY2l0eV07CgogIGlmICh3ZWF0aGVyKSB7CiAgICByZXN1bHQuaW5uZXJIVE1MID0gYAogICAgICAgIDxoMz4ke2NpdHkuY2hhckF0KDApLnRvVXBwZXJDYXNlKCkgKyBjaXR5LnNsaWNlKDEpfTwvaDM+CiAgICAgICAgPHA+8J+Moe+4jyAke3dlYXRoZXIudGVtcH3CsEM8L3A+CiAgICAgICAgPHA+JHt3ZWF0aGVyLmVtb2ppfSAke3dlYXRoZXIuZGVzY3JpcHRpb259PC9wPgogICAgICBgOwogIH0gZWxzZSB7CiAgICByZXN1bHQuaW5uZXJIVE1MID0gYDxkaXYgY2xhc3M9ImVycm9yIj5Tb3JyeSwgbm8gZGF0YSBhdmFpbGFibGUgZm9yICIke2NpdHl9Ii48L2Rpdj5gOwogIH0KfSk7Cg=='
       },
       'styles.css': {
-        content: `h1 {
-    color: navy;
-  }`
+        content:
+          'Ym9keSB7CiAgZm9udC1mYW1pbHk6IEFyaWFsLCBzYW5zLXNlcmlmOwogIGJhY2tncm91bmQtY29sb3I6ICNlZWYyZjU7CiAgZGlzcGxheTogZmxleDsKICBmbGV4LWRpcmVjdGlvbjogY29sdW1uOwogIGFsaWduLWl0ZW1zOiBjZW50ZXI7CiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7CiAgaGVpZ2h0OiAxMDB2aDsKICBtYXJnaW46IDA7Cn0KCmlucHV0LApidXR0b24gewogIGZvbnQtc2l6ZTogMTZweDsKICBtYXJnaW46IDVweDsKICBwYWRkaW5nOiA4cHggMTJweDsKfQoKYnV0dG9uIHsKICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDA3YmZmOwogIGNvbG9yOiB3aGl0ZTsKICBib3JkZXI6IG5vbmU7CiAgYm9yZGVyLXJhZGl1czogNHB4OwogIGN1cnNvcjogcG9pbnRlcjsKfQoKYnV0dG9uOmhvdmVyIHsKICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDA1NmIzOwp9Cgoud2VhdGhlciB7CiAgbWFyZ2luLXRvcDogMjBweDsKICB0ZXh0LWFsaWduOiBjZW50ZXI7Cn0KCi5lcnJvciB7CiAgY29sb3I6IGNyaW1zb247Cn0K'
       }
     }
   };
