@@ -4,6 +4,63 @@ import { useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { useEditorContext } from '@/context/EditorContext';
 import { base64ToUtf8 } from '@/utils';
+import type { Project } from '@/types';
+
+interface FileTree {
+  [key: string]: FileTree | null;
+}
+
+const renderFileTree = (
+  files: Project['files'],
+  activeFile: string,
+  setActiveFile: React.Dispatch<React.SetStateAction<string>>
+) => {
+  const fileTree: FileTree = {};
+
+  Object.keys(files).forEach(filePath => {
+    const parts = filePath.split('/');
+    let current = fileTree;
+
+    parts.forEach((part, index) => {
+      if (!current[part]) {
+        current[part] = index === parts.length - 1 ? null : {};
+      }
+      current = current[part] as FileTree;
+    });
+  });
+
+  const renderTree = (tree: FileTree, path = '') => {
+    return Object.entries(tree).map(([key, value]) => {
+      const fullPath = path ? `${path}/${key}` : key;
+
+      if (value === null) {
+        return (
+          <li key={fullPath}>
+            <button
+              onClick={() => setActiveFile(fullPath)}
+              className={`w-full text-left px-4 py-2 text-sm cursor-pointer ${
+                activeFile === fullPath
+                  ? 'bg-blue-500 text-white'
+                  : 'text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {key}
+            </button>
+          </li>
+        );
+      }
+
+      return (
+        <li key={fullPath}>
+          <div className='px-4 py-2 font-bold text-gray-700'>{key}</div>
+          <ul className='pl-4'>{renderTree(value, fullPath)}</ul>
+        </li>
+      );
+    });
+  };
+
+  return <ul className='flex-grow overflow-y-auto'>{renderTree(fileTree)}</ul>;
+};
 
 const Editor = () => {
   const { project, dispatch } = useEditorContext();
@@ -33,23 +90,12 @@ const Editor = () => {
   };
 
   return (
-    <div className='flex flex-col h-full'>
-      <div className='flex border-b border-gray-300'>
-        {Object.keys(project.files).map(filename => (
-          <button
-            key={filename}
-            onClick={() => setActiveFile(filename)}
-            className={`px-4 py-2 text-sm ${
-              activeFile === filename
-                ? 'border-b-2 border-blue-500 text-blue-600 bg-gray-100'
-                : 'text-gray-500 hover:bg-gray-50'
-            }`}
-          >
-            {filename}
-          </button>
-        ))}
+    <div className='flex h-full'>
+      <div className='w-1/5 border-r border-gray-300 bg-gray-50'>
+        <div className='p-2 font-bold text-gray-700'>Project</div>
+        {renderFileTree(project.files, activeFile, setActiveFile)}
       </div>
-      <div className='flex-grow'>
+      <div className='w-5/6'>
         {activeFile && project.files[activeFile] ? (
           <MonacoEditor
             language={getLanguage(activeFile)}
