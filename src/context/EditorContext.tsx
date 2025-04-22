@@ -1,11 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, use } from 'react';
+import { createContext, useContext, useReducer, use } from 'react';
 import type { ReactNode } from 'react';
-import type { Project } from '@/lib/types';
+import type { Project } from '@/types';
 
 interface EditorContextType {
   project: Project;
+  dispatch: React.Dispatch<EditorAction>;
 }
 
 interface EditorProviderProps {
@@ -13,13 +14,39 @@ interface EditorProviderProps {
   projectPromise: Promise<Project>;
 }
 
+export type EditorAction = {
+  type: 'EDIT_FILE';
+  payload: { filename: string; content: string | undefined };
+};
+
+const editorReducer = (state: Project, action: EditorAction): Project => {
+  switch (action.type) {
+    case 'EDIT_FILE': {
+      const { filename, content } = action.payload;
+      return {
+        ...state,
+        files: {
+          ...state.files,
+          [filename]: {
+            ...state.files[filename],
+            content: content ?? state.files[filename]?.content ?? ''
+          }
+        }
+      };
+    }
+    default:
+      return state;
+  }
+};
+
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
 
 const EditorProvider: React.FC<EditorProviderProps> = ({ children, projectPromise }) => {
-  const [project, setProject] = useState<Project>(use(projectPromise));
-
+  const initialProject = use(projectPromise);
+  const [project, dispatch] = useReducer(editorReducer, initialProject);
   const value = {
-    project
+    project,
+    dispatch
   };
 
   return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;

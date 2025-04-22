@@ -1,27 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { useEditorContext } from '@/context/EditorContext';
 
 const Editor = () => {
-  const { project } = useEditorContext();
+  const { project, dispatch } = useEditorContext();
   const [activeFile, setActiveFile] = useState<string>(
     project ? Object.keys(project.files)[0] || '' : ''
   );
 
-  useEffect(() => {
-    if (project && !project.files[activeFile]) {
-      setActiveFile(Object.keys(project.files)[0] || '');
-    } else if (!project) {
-      setActiveFile('');
-    }
-  }, [project, activeFile]);
-
   const handleEditorChange = (value: string | undefined) => {
-    if (project && activeFile && value !== undefined) {
-      console.log(`File ${activeFile} changed:`, value);
-    }
+    dispatch({
+      type: 'EDIT_FILE',
+      payload: { filename: activeFile, content: value }
+    });
   };
 
   const getLanguage = (filename: string): string => {

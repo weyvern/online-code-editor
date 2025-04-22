@@ -1,4 +1,4 @@
-import type { Project } from '@/lib/types';
+import type { Project } from '@/types';
 
 export const getProject = async (): Promise<Project> => {
   return {
@@ -18,8 +18,7 @@ export const getProject = async (): Promise<Project> => {
   </html>`
       },
       'index.js': {
-        content: `console.log('Hello from JavaScript!');
-  document.body.style.backgroundColor = 'lightblue';`
+        content: `console.log('Hello from JavaScript!');\ndocument.body.style.backgroundColor = 'lightblue';`
       },
       'styles.css': {
         content: `h1 {

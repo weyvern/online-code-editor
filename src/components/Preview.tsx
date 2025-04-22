@@ -1,32 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useEditorContext } from '@/context/EditorContext';
+import { parsingStaticProjects, useDebouncedValue } from '@/utils';
+import type { Project } from '@/types';
 
 const Preview = () => {
   const { project } = useEditorContext();
   const [iframeContent, setIframeContent] = useState('');
+  const debouncedProject = useDebouncedValue<Project>(project, 500);
+  const lastBlobUrls = useRef<string[]>([]);
 
   useEffect(() => {
-    // Assemble the HTML document whenever the project state changes
-    const htmlFile = project.files['index.html']?.content || '';
-    const cssFile = project.files['styles.css']?.content || '';
-    const jsFile = project.files['index.js']?.content || '';
-
-    // Basic assembly: Inject CSS into <style> and JS into <script>
-    // More robust assembly might be needed for complex cases (e.g., multiple scripts, modules)
-    const assembledHtml = htmlFile
-      .replace('</head>', `<style>${cssFile}</style></head>`)
-      .replace('</body>', `<script>${jsFile}</script></body>`);
-
+    const { assembledHtml, blobUrls } = parsingStaticProjects(debouncedProject);
     setIframeContent(assembledHtml);
-  }, [project]); // Re-run effect when project data changes
+    lastBlobUrls.current = blobUrls.map(b => b.blobUrl);
+
+    return () => {
+      lastBlobUrls.current.forEach(URL.revokeObjectURL);
+    };
+  }, [debouncedProject]);
 
   return (
     <iframe
       srcDoc={iframeContent}
       title='Preview'
-      sandbox='allow-scripts allow-same-origin' // Security sandbox settings
+      sandbox='allow-scripts allow-same-origin'
       className='w-full h-full border-none'
     />
   );
