@@ -22,12 +22,21 @@ const Preview = () => {
   }, [debouncedProject]);
 
   return (
-    <iframe
-      srcDoc={iframeContent}
-      title='Preview'
-      sandbox='allow-scripts allow-same-origin'
-      className='w-full h-full border-none'
-    />
+    <div className='w-full h-full flex flex-col'>
+      {/* Fake address bar */}
+      <div className='bg-gray-200 p-2 border-b border-gray-300'>
+        <span className='w-full p-1 bg-white border border-gray-400 rounded text-gray-600 cursor-default flex items-center'>
+          🔒 https://preview.example.com
+        </span>
+      </div>
+      {/* Iframe preview */}
+      <iframe
+        srcDoc={iframeContent}
+        title='Preview'
+        sandbox='allow-scripts allow-same-origin'
+        className='w-full h-full border-none'
+      />
+    </div>
   );
 };
 
