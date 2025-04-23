@@ -7,7 +7,7 @@ import EditorProvider from '@/context/EditorContext';
 import { getProject } from '@/data/projects';
 
 const Home = () => {
-  const projectPromise = getProject();
+  const projectPromise = getProject(1);
 
   return (
     <main className='flex h-screen w-screen'>
