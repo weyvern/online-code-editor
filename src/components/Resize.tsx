@@ -52,9 +52,7 @@ const Resize = () => {
 
   return (
     <div className='w-8 flex cursor-ew-resize justify-center' ref={dividerRef}>
-      <div className='divider divider-horizontal divider-primary h-screen'>
-        <span>div</span>
-      </div>
+      <div className='divider divider-horizontal divider-primary h-screen'></div>
     </div>
   );
 };

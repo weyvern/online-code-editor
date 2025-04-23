@@ -40,8 +40,8 @@ const renderFileTree = (
               onClick={() => setActiveFile(fullPath)}
               className={`w-full text-left px-4 py-2 text-sm cursor-pointer ${
                 activeFile === fullPath
-                  ? 'bg-blue-500 text-white'
-                  : 'text-gray-700 hover:bg-gray-200'
+                  ? 'bg-primary text-white'
+                  : 'hover:bg-gray-200 hover:text-gray-900'
               }`}
             >
               {key}
@@ -52,7 +52,7 @@ const renderFileTree = (
 
       return (
         <li key={fullPath}>
-          <div className='px-4 py-2 font-bold text-gray-700'>{key}</div>
+          <div className='px-4 py-2 font-bold'>{key}</div>
           <ul className='pl-4'>{renderTree(value, fullPath)}</ul>
         </li>
       );
@@ -84,18 +84,22 @@ const Editor = () => {
         return 'css';
       case 'html':
         return 'html';
+      case 'json':
+        return 'json';
+      case 'md':
+        return 'markdown';
       default:
         return 'plaintext';
     }
   };
 
   return (
-    <div className='flex h-full w-[calc(100%-2rem)] overflow-hidden'>
-      <div className='w-1/5 border-r border-gray-300 bg-gray-50'>
-        <div className='p-2 font-bold text-gray-700'>{project.name}</div>
+    <div className='flex h-full overflow-hidden' style={{ width: 'calc(100% - 2rem)' }}>
+      <aside className='flex-shrink-0 max-w-[150px] overflow-y-auto'>
+        <div className='p-2 font-bold'>{project.name}</div>
         {renderFileTree(project.files, activeFile, setActiveFile)}
-      </div>
-      <div className='w-5/6'>
+      </aside>
+      <div className='flex-1 min-w-0'>
         {activeFile && project.files[activeFile] ? (
           <MonacoEditor
             language={getLanguage(activeFile)}

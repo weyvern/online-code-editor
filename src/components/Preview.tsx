@@ -7,6 +7,7 @@ import type { Project } from '@/types';
 
 const Preview = () => {
   const { project } = useEditorContext();
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeContent, setIframeContent] = useState('');
   const debouncedProject = useDebouncedValue<Project>(project, 500);
   const lastBlobUrls = useRef<string[]>([]);
@@ -22,19 +23,28 @@ const Preview = () => {
   }, [debouncedProject]);
 
   return (
-    <div className='w-[calc(100%-2rem)] overflow-hidden'>
-      {/* Fake address bar */}
-      <div className='bg-gray-200 p-2 border-b border-gray-300'>
-        <span className='w-full p-1 bg-white border border-gray-400 rounded text-gray-600 cursor-default flex items-center'>
-          🔒 https://preview.example.com
-        </span>
+    <div className='mockup-browser border border-base-300' style={{ width: 'calc(100% - 2rem)' }}>
+      <div className='mockup-browser-toolbar'>
+        <div className='input'>https://preview.wbscod.in</div>
+        <div className='flex-none'>
+          <button
+            className='btn btn-ghost btn-sm'
+            onClick={() => {
+              if (iframeRef.current) {
+                iframeRef.current.contentWindow?.location.reload();
+              }
+            }}
+          >
+            Reload
+          </button>
+        </div>
       </div>
-      {/* Iframe preview */}
       <iframe
+        ref={iframeRef}
         srcDoc={iframeContent}
-        title='Preview'
+        title={project.name}
         sandbox='allow-scripts allow-same-origin'
-        className='w-full h-full border-none'
+        className='grid place-content-center w-full h-full'
       />
     </div>
   );
