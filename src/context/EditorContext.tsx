@@ -1,7 +1,6 @@
 'use client';
 
-import { createContext, useContext, useReducer, use } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, ReactNode, useContext, useReducer, use } from 'react';
 import { utf8ToBase64 } from '@/utils';
 import type { Project } from '@/types';
 
@@ -15,7 +14,7 @@ type EditorProviderProps = {
   projectPromise: Promise<Project>;
 };
 
-export type EditorAction = {
+type EditorAction = {
   type: 'EDIT_FILE';
   payload: { filename: string; content: string | undefined };
 };

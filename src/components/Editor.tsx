@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import MonacoEditor from '@monaco-editor/react';
+import MonacoEditor, { Monaco, OnChange, OnMount } from '@monaco-editor/react';
 import Loading from '@/components/Loading';
 import { useEditorContext } from '@/context/EditorContext';
 import { base64ToUtf8 } from '@/utils';
 import type { Project } from '@/types';
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 type FileTree = {
   [key: string]: FileTree | null;
@@ -16,7 +15,7 @@ type FileTree = {
 const renderFileTree = (
   files: Project['files'],
   activeFile: string,
-  router: AppRouterInstance,
+  router: ReturnType<typeof useRouter>,
   pathname: string
 ) => {
   const fileTree: FileTree = {};
@@ -68,12 +67,23 @@ const renderFileTree = (
 
 const Editor = ({ goToFile }: { goToFile: string | undefined }) => {
   const { project, dispatch } = useEditorContext();
+  const monacoRef = useRef<Monaco | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
   const [activeFile, setActiveFile] = useState<string>(
     project ? Object.keys(project.files)[0] || '' : ''
   );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) =>
+      monacoRef.current?.editor.setTheme(e.matches ? 'vs-dark' : 'vs-light');
+
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   useEffect(() => {
     if (goToFile && project.files[goToFile]) {
@@ -83,11 +93,15 @@ const Editor = ({ goToFile }: { goToFile: string | undefined }) => {
     }
   }, [goToFile, project.files, router, pathname]);
 
-  const handleEditorChange = (value: string | undefined) => {
+  const handleEditorChange: OnChange = value => {
     dispatch({
       type: 'EDIT_FILE',
       payload: { filename: activeFile, content: value }
     });
+  };
+
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    monacoRef.current = monaco;
   };
 
   const getLanguage = (filename: string): string => {
@@ -119,8 +133,8 @@ const Editor = ({ goToFile }: { goToFile: string | undefined }) => {
           <MonacoEditor
             loading={<Loading />}
             language={getLanguage(activeFile)}
-            theme='vs-dark'
             value={base64ToUtf8(project.files[activeFile]?.content || '')}
+            onMount={handleEditorDidMount}
             onChange={handleEditorChange}
             options={{
               automaticLayout: true,

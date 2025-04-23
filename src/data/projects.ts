@@ -1,5 +1,5 @@
-import type { Project } from '@/types';
 import { notFound } from 'next/navigation';
+import type { Project } from '@/types';
 
 export const getProject = async (projectId: number): Promise<Project> => {
   const projects: Project[] = [
