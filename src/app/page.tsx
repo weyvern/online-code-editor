@@ -6,14 +6,15 @@ import Resize from '@/components/Resize';
 import EditorProvider from '@/context/EditorContext';
 import { getProject } from '@/data/projects';
 
-const Home = () => {
+const Home = async ({ searchParams }: { searchParams: Promise<{ file: string }> }) => {
+  const { file } = await searchParams;
   const projectPromise = getProject(1);
 
   return (
     <main className='flex h-screen w-screen'>
       <Suspense fallback={<Loading />}>
         <EditorProvider projectPromise={projectPromise}>
-          <Editor />
+          <Editor goToFile={file} />
           <Resize />
           <Preview />
         </EditorProvider>

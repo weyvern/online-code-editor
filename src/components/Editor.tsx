@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import MonacoEditor from '@monaco-editor/react';
+import Loading from '@/components/Loading';
 import { useEditorContext } from '@/context/EditorContext';
 import { base64ToUtf8 } from '@/utils';
 import type { Project } from '@/types';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 type FileTree = {
   [key: string]: FileTree | null;
@@ -13,7 +16,8 @@ type FileTree = {
 const renderFileTree = (
   files: Project['files'],
   activeFile: string,
-  setActiveFile: React.Dispatch<React.SetStateAction<string>>
+  router: AppRouterInstance,
+  pathname: string
 ) => {
   const fileTree: FileTree = {};
 
@@ -37,7 +41,7 @@ const renderFileTree = (
         return (
           <li key={fullPath}>
             <button
-              onClick={() => setActiveFile(fullPath)}
+              onClick={() => router.push(`${pathname}?file=${fullPath}`)}
               className={`w-full text-left px-4 py-2 text-sm cursor-pointer ${
                 activeFile === fullPath
                   ? 'bg-primary text-white'
@@ -62,11 +66,22 @@ const renderFileTree = (
   return <ul className='flex-grow overflow-y-auto'>{renderTree(fileTree)}</ul>;
 };
 
-const Editor = () => {
+const Editor = ({ goToFile }: { goToFile: string | undefined }) => {
   const { project, dispatch } = useEditorContext();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [activeFile, setActiveFile] = useState<string>(
     project ? Object.keys(project.files)[0] || '' : ''
   );
+
+  useEffect(() => {
+    if (goToFile && project.files[goToFile]) {
+      setActiveFile(goToFile);
+    } else {
+      router.push(`${pathname}`);
+    }
+  }, [goToFile, project.files, router, pathname]);
 
   const handleEditorChange = (value: string | undefined) => {
     dispatch({
@@ -97,11 +112,12 @@ const Editor = () => {
     <div className='flex h-full overflow-hidden' style={{ width: 'calc(100% - 2rem)' }}>
       <aside className='flex-shrink-0 max-w-[150px] overflow-y-auto'>
         <div className='p-2 font-bold'>{project.name}</div>
-        {renderFileTree(project.files, activeFile, setActiveFile)}
+        {renderFileTree(project.files, activeFile, router, pathname)}
       </aside>
       <div className='flex-1 min-w-0'>
         {activeFile && project.files[activeFile] ? (
           <MonacoEditor
+            loading={<Loading />}
             language={getLanguage(activeFile)}
             theme='vs-dark'
             value={base64ToUtf8(project.files[activeFile]?.content || '')}
