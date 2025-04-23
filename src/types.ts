@@ -3,6 +3,7 @@ export interface ProjectFile {
 }
 
 export interface Project {
+  name: string;
   type: 'static';
   files: {
     [filename: string]: ProjectFile;

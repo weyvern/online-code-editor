@@ -5,15 +5,15 @@ import type { ReactNode } from 'react';
 import { utf8ToBase64 } from '@/utils';
 import type { Project } from '@/types';
 
-interface EditorContextType {
+type EditorContextType = {
   project: Project;
   dispatch: React.Dispatch<EditorAction>;
-}
+};
 
-interface EditorProviderProps {
+type EditorProviderProps = {
   children: ReactNode;
   projectPromise: Promise<Project>;
-}
+};
 
 export type EditorAction = {
   type: 'EDIT_FILE';

@@ -6,9 +6,9 @@ export const metadata: Metadata = {
   description: 'A simple code editor built with Next.js and Monaco Editor'
 };
 
-interface RootLayoutProps {
+type RootLayoutProps = {
   children: React.ReactNode;
-}
+};
 
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (

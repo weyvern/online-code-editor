@@ -6,9 +6,9 @@ import { useEditorContext } from '@/context/EditorContext';
 import { base64ToUtf8 } from '@/utils';
 import type { Project } from '@/types';
 
-interface FileTree {
+type FileTree = {
   [key: string]: FileTree | null;
-}
+};
 
 const renderFileTree = (
   files: Project['files'],

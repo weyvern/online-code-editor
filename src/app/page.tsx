@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Editor from '@/components/Editor';
+import Loading from '@/components/Loading';
 import Preview from '@/components/Preview';
 import Resize from '@/components/Resize';
 import EditorProvider from '@/context/EditorContext';
@@ -10,9 +11,7 @@ const Home = () => {
 
   return (
     <main className='flex h-screen w-screen'>
-      <Suspense
-        fallback={<div className='flex items-center justify-center w-full h-full'>Loading...</div>}
-      >
+      <Suspense fallback={<Loading />}>
         <EditorProvider projectPromise={projectPromise}>
           <Editor />
           <Resize />

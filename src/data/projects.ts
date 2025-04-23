@@ -2,6 +2,7 @@ import type { Project } from '@/types';
 
 export const getProject = async (): Promise<Project> => {
   return {
+    name: 'Weather Lookup',
     type: 'static',
     files: {
       'index.html': {
