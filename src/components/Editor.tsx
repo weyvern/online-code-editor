@@ -92,7 +92,7 @@ const Editor = () => {
   return (
     <div className='flex h-full w-[calc(100%-2rem)] overflow-hidden'>
       <div className='w-1/5 border-r border-gray-300 bg-gray-50'>
-        <div className='p-2 font-bold text-gray-700'>Project</div>
+        <div className='p-2 font-bold text-gray-700'>{project.name}</div>
         {renderFileTree(project.files, activeFile, setActiveFile)}
       </div>
       <div className='w-5/6'>

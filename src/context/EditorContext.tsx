@@ -50,7 +50,7 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, projectPromis
     dispatch
   };
 
-  return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
+  return <EditorContext value={value}>{children}</EditorContext>;
 };
 
 export const useEditorContext = () => {
