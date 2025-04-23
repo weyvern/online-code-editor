@@ -22,7 +22,7 @@ const Preview = () => {
   }, [debouncedProject]);
 
   return (
-    <div className='w-full h-full flex flex-col'>
+    <div className='w-[calc(100%-2rem)] overflow-hidden'>
       {/* Fake address bar */}
       <div className='bg-gray-200 p-2 border-b border-gray-300'>
         <span className='w-full p-1 bg-white border border-gray-400 rounded text-gray-600 cursor-default flex items-center'>
