@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import MonacoEditor, { OnChange } from '@monaco-editor/react';
 import Loading from '@/components/Loading';
@@ -16,7 +16,8 @@ const renderFileTree = (
   files: Project['files'],
   activeFile: string,
   router: ReturnType<typeof useRouter>,
-  pathname: string
+  pathname: string,
+  setActiveFile: Dispatch<SetStateAction<string>>
 ) => {
   const fileTree: FileTree = {};
 
@@ -40,7 +41,10 @@ const renderFileTree = (
         return (
           <li key={fullPath}>
             <button
-              onClick={() => router.push(`${pathname}?file=${fullPath}`)}
+              onClick={() => {
+                router.push(`${pathname}?file=${fullPath}`);
+                setActiveFile(fullPath);
+              }}
               className={`w-full text-left px-4 py-2 text-sm cursor-pointer ${
                 activeFile === fullPath
                   ? 'bg-primary text-white'
@@ -71,7 +75,7 @@ const Editor = ({ goToFile }: { goToFile: string | undefined }) => {
   const pathname = usePathname();
 
   const [activeFile, setActiveFile] = useState<string>(
-    project ? Object.keys(project.files)[0] || '' : ''
+    goToFile || Object.keys(project.files)[0] || ''
   );
   const [theme, setTheme] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -87,14 +91,6 @@ const Editor = ({ goToFile }: { goToFile: string | undefined }) => {
 
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
-
-  useEffect(() => {
-    if (goToFile && project.files[goToFile]) {
-      setActiveFile(goToFile);
-    } else {
-      router.push(`${pathname}`);
-    }
-  }, [goToFile, project.files, router, pathname]);
 
   const handleEditorChange: OnChange = value => {
     dispatch({
@@ -125,7 +121,7 @@ const Editor = ({ goToFile }: { goToFile: string | undefined }) => {
     <div className='flex h-full overflow-hidden' style={{ width: 'calc(100% - 2rem)' }}>
       <aside className='flex-shrink-0 max-w-[150px] overflow-y-auto'>
         <div className='p-2 font-bold'>{project.name}</div>
-        {renderFileTree(project.files, activeFile, router, pathname)}
+        {renderFileTree(project.files, activeFile, router, pathname, setActiveFile)}
       </aside>
       <div className='flex-1 min-w-0'>
         {activeFile && project.files[activeFile] ? (

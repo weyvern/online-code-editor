@@ -13,14 +13,26 @@ const Preview = () => {
   const lastBlobUrls = useRef<string[]>([]);
 
   useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/preview-sw.js');
+    }
+  }, []);
+
+  useEffect(() => {
     const { assembledHtml, blobUrls } = parsingStaticProjects(debouncedProject);
     setIframeContent(assembledHtml);
     lastBlobUrls.current = blobUrls.map(b => b.blobUrl);
-
     return () => {
       lastBlobUrls.current.forEach(URL.revokeObjectURL);
     };
   }, [debouncedProject]);
+
+  useEffect(() => {
+    navigator.serviceWorker.controller?.postMessage({
+      type: 'UPDATE_PREVIEW',
+      html: iframeContent
+    });
+  }, [iframeContent]);
 
   return (
     <div className='mockup-browser border border-base-300' style={{ width: 'calc(100% - 2rem)' }}>
